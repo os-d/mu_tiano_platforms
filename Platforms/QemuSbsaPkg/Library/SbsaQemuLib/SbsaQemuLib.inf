@@ -35,6 +35,11 @@
   FdtLib
   MemoryAllocationLib
   PcdLib
+  HobLib
+
+[Guids]
+  gMmMemoryProtectionSettingsGuid
+  gDxeMemoryProtectionSettingsGuid
 
 [Pcd]
   gArmTokenSpaceGuid.PcdSystemMemoryBase

@@ -33,7 +33,7 @@ class QemuRunner(uefi_helper_plugin.IUefiHelperPlugin):
     @staticmethod
     def Runner(env):
         ''' Runs QEMU '''
-        VirtualDrive = env.GetValue("VIRTUAL_DRIVE_PATH")
+        VirtualDrive = "/home/osde/shareddir"#env.GetValue("VIRTUAL_DRIVE_PATH")
         OutputPath_FV = os.path.join(env.GetValue("BUILD_OUTPUT_BASE"), "FV")
 
         # Check if QEMU is on the path, if not find it
@@ -75,12 +75,14 @@ class QemuRunner(uefi_helper_plugin.IUefiHelperPlugin):
         gdb_port = env.GetValue("GDB_SERVER")
         if (gdb_port != None):
             logging.log(logging.INFO, "Enabling GDB server at port tcp::" + gdb_port + ".")
-            args += " -gdb tcp::" + gdb_port
+            args += " -S -gdb tcp::" + gdb_port
 
         # write ConOut messages to telnet localhost port
         serial_port = env.GetValue("SERIAL_PORT")
         if serial_port != None:
-            args += " -serial tcp:127.0.0.1:" + serial_port + ",server,nowait"
+            args += " -serial tcp:127.0.0.1:" + serial_port + ",server"
+            args += " -serial tcp:127.0.0.1:" + "4322" + ",server"
+            args += " -serial tcp:127.0.0.1:" + "4323" + ",server"
         else:
             # write messages to stdio
             args += " -serial stdio"

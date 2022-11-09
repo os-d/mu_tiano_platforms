@@ -7,6 +7,7 @@
 
 **/
 
+#include <PiPei.h>
 #include <Base.h>
 #include <Library/ArmLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -14,6 +15,10 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
 #include <libfdt.h>
+
+#include <Library/HobLib.h>
+#include <Guid/DxeMemoryProtectionSettings.h> // MU_CHANGE
+#include <Guid/MmMemoryProtectionSettings.h>  // MU_CHANGE
 
 // Number of Virtual Memory Map Descriptors
 #define MAX_VIRTUAL_MEMORY_MAP_DESCRIPTORS          5
@@ -83,6 +88,86 @@ SbsaQemuLibConstructor (
   return RETURN_SUCCESS;
 }
 
+#define DXE_MEMORY_PROTECTION_SETTINGS_OSDDEBUG                    \
+          {                                                     \
+            DXE_MEMORY_PROTECTION_SETTINGS_CURRENT_VERSION,     \
+            TRUE,   /* Stack Guard On */                        \
+            {                                                   \
+              .Fields.UefiNullDetection               = 1,      \
+              .Fields.DisableEndOfDxe                 = 0,      \
+              .Fields.DisableReadyToBoot              = 0       \
+            },                                                  \
+            {                                                   \
+              .Fields.UefiPageGuard                   = 1,      \
+              .Fields.UefiPoolGuard                   = 1,      \
+              .Fields.UefiFreedMemoryGuard            = 0,      \
+              .Fields.Direction                       = 0       \
+            },                                                  \
+            {                                                   \
+              .Fields.ProtectImageFromUnknown         = 1,      \
+              .Fields.ProtectImageFromFv              = 1,      \
+              .Fields.RaiseErrorIfProtectionFails     = 1,      \
+              .Fields.BlockImagesWithoutNxFlag        = 0       \
+            },                                                  \
+            {                                                   \
+              .Fields.EfiReservedMemoryType           = 1,      \
+              .Fields.EfiLoaderCode                   = 1,      \
+              .Fields.EfiLoaderData                   = 1,      \
+              .Fields.EfiBootServicesCode             = 1,      \
+              .Fields.EfiBootServicesData             = 1,      \
+              .Fields.EfiRuntimeServicesCode          = 1,      \
+              .Fields.EfiRuntimeServicesData          = 1,      \
+              .Fields.EfiConventionalMemory           = 0,      \
+              .Fields.EfiUnusableMemory               = 1,      \
+              .Fields.EfiACPIReclaimMemory            = 1,      \
+              .Fields.EfiACPIMemoryNVS                = 1,      \
+              .Fields.EfiMemoryMappedIO               = 1,      \
+              .Fields.EfiMemoryMappedIOPortSpace      = 1,      \
+              .Fields.EfiPalCode                      = 1,      \
+              .Fields.EfiPersistentMemory             = 0,      \
+              .Fields.OEMReserved                     = 1,      \
+              .Fields.OSReserved                      = 1       \
+            },                                                  \
+            {                                                   \
+              .Fields.EfiReservedMemoryType           = 1,      \
+              .Fields.EfiLoaderCode                   = 1,      \
+              .Fields.EfiLoaderData                   = 1,      \
+              .Fields.EfiBootServicesCode             = 1,      \
+              .Fields.EfiBootServicesData             = 1,      \
+              .Fields.EfiRuntimeServicesCode          = 1,      \
+              .Fields.EfiRuntimeServicesData          = 1,      \
+              .Fields.EfiConventionalMemory           = 0,      \
+              .Fields.EfiUnusableMemory               = 1,      \
+              .Fields.EfiACPIReclaimMemory            = 1,      \
+              .Fields.EfiACPIMemoryNVS                = 1,      \
+              .Fields.EfiMemoryMappedIO               = 1,      \
+              .Fields.EfiMemoryMappedIOPortSpace      = 1,      \
+              .Fields.EfiPalCode                      = 1,      \
+              .Fields.EfiPersistentMemory             = 0,      \
+              .Fields.OEMReserved                     = 1,      \
+              .Fields.OSReserved                      = 1       \
+            },                                                  \
+            {                                                   \
+              .Fields.EfiReservedMemoryType           = 1,      \
+              .Fields.EfiLoaderCode                   = 1,      \
+              .Fields.EfiLoaderData                   = 1,      \
+              .Fields.EfiBootServicesCode             = 1,      \
+              .Fields.EfiBootServicesData             = 1,      \
+              .Fields.EfiRuntimeServicesCode          = 1,      \
+              .Fields.EfiRuntimeServicesData          = 1,      \
+              .Fields.EfiConventionalMemory           = 1,      \
+              .Fields.EfiUnusableMemory               = 1,      \
+              .Fields.EfiACPIReclaimMemory            = 1,      \
+              .Fields.EfiACPIMemoryNVS                = 1,      \
+              .Fields.EfiMemoryMappedIO               = 1,      \
+              .Fields.EfiMemoryMappedIOPortSpace      = 1,      \
+              .Fields.EfiPalCode                      = 1,      \
+              .Fields.EfiPersistentMemory             = 0,      \
+              .Fields.OEMReserved                     = 1,      \
+              .Fields.OSReserved                      = 1       \
+            }                                                   \
+          }
+
 /**
   Return the Virtual Memory Map of your platform
 
@@ -102,6 +187,34 @@ ArmPlatformGetVirtualMemoryMap (
   )
 {
   ARM_MEMORY_REGION_DESCRIPTOR  *VirtualMemoryTable;
+  DXE_MEMORY_PROTECTION_SETTINGS  DxeSettings;
+  MM_MEMORY_PROTECTION_SETTINGS   MmSettings;
+
+  DxeSettings = (DXE_MEMORY_PROTECTION_SETTINGS)DXE_MEMORY_PROTECTION_SETTINGS_OSDDEBUG;
+  MmSettings  = (MM_MEMORY_PROTECTION_SETTINGS)MM_MEMORY_PROTECTION_SETTINGS_DEBUG;
+
+  MmSettings.HeapGuardPolicy.Fields.MmPageGuard                    = 1;
+  MmSettings.HeapGuardPolicy.Fields.MmPoolGuard                    = 1;
+  //DxeSettings.ImageProtectionPolicy.Fields.ProtectImageFromUnknown = 1;
+  // THE /NXCOMPAT DLL flag cannot be set using non MinGW GCC
+ #ifdef __GNUC__
+  //DxeSettings.ImageProtectionPolicy.Fields.BlockImagesWithoutNxFlag = 0;
+ #endif
+
+  DEBUG ((DEBUG_ERROR, "%a: OSDDEBUG GetVirtualMemoryMap\n",
+          __FUNCTION__));
+
+  BuildGuidDataHob (
+    &gDxeMemoryProtectionSettingsGuid,
+    &DxeSettings,
+    sizeof (DxeSettings)
+    );
+
+  BuildGuidDataHob (
+    &gMmMemoryProtectionSettingsGuid,
+    &MmSettings,
+    sizeof (MmSettings)
+    );
 
   ASSERT (VirtualMemoryMap != NULL);
 

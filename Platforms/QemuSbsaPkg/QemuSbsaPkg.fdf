@@ -425,7 +425,9 @@ READ_LOCK_STATUS   = TRUE
   # Unit Test
   #
   !if $(BUILD_UNIT_TESTS) == TRUE
-  # INF  UefiTestingPkg/AuditTests/PagingAudit/UEFI/DxePagingAuditDriver.inf
+    #INF  UefiTestingPkg/AuditTests/PagingAudit/UEFI/DxePagingAuditDriver.inf
+    INF MdeModulePkg/Universal/FvSimpleFileSystemDxe/FvSimpleFileSystemDxe.inf
+    #INF UefiTestingPkg/FunctionalSystemTests/MemoryProtectionTest/App/MemoryProtectionTestApp.inf
   !endif
 
   #
