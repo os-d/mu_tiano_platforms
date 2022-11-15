@@ -53,7 +53,7 @@ class QemuRunner(uefi_helper_plugin.IUefiHelperPlugin):
     @staticmethod
     def Runner(env):
         ''' Runs QEMU '''
-        VirtualDrive = env.GetValue("VIRTUAL_DRIVE_PATH")
+        VirtualDrive = "d:\\tmpd"#env.GetValue("VIRTUAL_DRIVE_PATH")
         OutputPath_FV = os.path.join(env.GetValue("BUILD_OUTPUT_BASE"), "FV")
 
         # Check if QEMU is on the path, if not find it
