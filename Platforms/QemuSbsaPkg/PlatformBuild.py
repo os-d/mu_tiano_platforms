@@ -339,17 +339,31 @@ class PlatformBuilder( UefiBuilder, BuildSettingsManager):
         output_base = self.env.GetValue("BUILD_OUTPUT_BASE")
         shutdown_after_run = (self.env.GetValue("SHUTDOWN_AFTER_RUN", "FALSE").upper() == "TRUE")
         empty_drive = (self.env.GetValue("EMPTY_DRIVE", "FALSE").upper() == "TRUE")
-
-        if os.name == 'nt':
-            VirtualDrivePath = self.env.GetValue("VIRTUAL_DRIVE_PATH", os.path.join(output_base, "VirtualDrive.vhd"))
+        SharedDirPath = self.env.GetValue("SHARED_DIR_PATH", None)
+        VirtualDriveIsSharedDir = False
+        VirtualDrivePath = self.env.GetValue("VIRTUAL_DRIVE_PATH", os.path.join(output_base, "VirtualDrive.vhd"))
+        if SharedDirPath is not None:
+            VirtualDriveIsSharedDir = True
+            VirtualDrivePath = SharedDirPath
+        else:
             VirtualDrive = VirtualDriveManager(VirtualDrivePath, self.env)
-            self.env.SetValue("VIRTUAL_DRIVE_PATH", VirtualDrivePath, "Set Virtual Drive path in case not set")
+        
+        self.env.SetValue("VIRTUAL_DRIVE_PATH", VirtualDrivePath, "Set Virtual Drive path in case not set")
+
+        # VHD support exists for Windows and is the default if VIRTUAL_DRIVE_PATH is not set
+        # for Linux, VHD support is not there, so a shared drive is used, which is an option for Windows if
+        # VIRTUAL_DRIVE_PATH is set
+        if os.name == 'nt' or SharedDirPath is not None:
             ut = UnitTestSupport(os.path.join(output_base, "AARCH64"))
 
-            if empty_drive and os.path.isfile(VirtualDrivePath):
+            if empty_drive:
+                if not VirtualDriveIsSharedDir:
                     os.remove(VirtualDrivePath)
+                else:
+                    shutil.rmtree(VirtualDrivePath)
+                    os.mkdir(VirtualDrivePath, 0o777)
 
-            if not os.path.isfile(VirtualDrivePath):
+            if not VirtualDriveIsSharedDir and not os.path.isfile(VirtualDrivePath):
                 VirtualDrive.MakeDrive()
 
             test_regex = self.env.GetValue("TEST_REGEX", "")
@@ -357,7 +371,10 @@ class PlatformBuilder( UefiBuilder, BuildSettingsManager):
             if test_regex != "":
                 ut.set_test_regex(test_regex)
                 ut.find_tests()
-                ut.copy_tests_to_virtual_drive(VirtualDrive)
+                if not VirtualDriveIsSharedDir:
+                    ut.copy_tests_to_virtual_drive(VirtualDrive)
+                else:
+                    ut.copy_tests_to_shared_dir(VirtualDrivePath)
 
             if run_tests:
                 if test_regex == "":
@@ -373,8 +390,10 @@ class PlatformBuilder( UefiBuilder, BuildSettingsManager):
             nshpath = os.path.join(output_base, "startup.nsh")
             startup_nsh.WriteOut(nshpath, shutdown_after_run)
 
-            VirtualDrive.AddFile(nshpath)
-
+            if not VirtualDriveIsSharedDir:
+                VirtualDrive.AddFile(nshpath)
+            else:
+                shutil.copy(nshpath, VirtualDrivePath)
         else:
             VirtualDrivePath = self.env.GetValue("VIRTUAL_DRIVE_PATH", os.path.join(output_base, "VirtualDrive"))
             logging.warning("Linux currently isn't supported for the virtual drive. Falling back to an older method")
@@ -398,8 +417,11 @@ class PlatformBuilder( UefiBuilder, BuildSettingsManager):
             return ret
 
         failures = 0
-        if run_tests and os.name == 'nt':
-            failures = ut.report_results(VirtualDrive)
+        if run_tests and SharedDirPath is not None:
+            if not VirtualDriveIsSharedDir:
+                failures = ut.report_results(VirtualDrive, VirtualDriveIsSharedDir, output_base)
+            else:
+                failures = ut.report_results(VirtualDrivePath, VirtualDriveIsSharedDir, output_base)
 
         # do stuff with unit test results here
         return failures
@@ -424,23 +446,43 @@ class UnitTestSupport(object):
         for test in self.test_list:
             virtualdrive.AddFile(test)
 
+    def copy_tests_to_shared_dir(self, SharedDirPath):
+        for test in self.test_list:
+            test_path = os.path.join(SharedDirPath, os.path.basename(test))
+            if os.path.isdir(test):
+                shutil.copytree(test, test_path, dirs_exist_ok=True)
+            else:
+                print ("Test: ", test, " SharedDirPath: ", SharedDirPath)
+                shutil.copy(test, SharedDirPath)
+
     def write_tests_to_startup_nsh(self,nshfile):
         for test in self.test_list:
             nshfile.AddLine(os.path.basename(test))
 
-    def report_results(self, virtualdrive) -> int:
+    def report_results(self, virtualdrive, VirtualDriveIsSharedDir, output_base) -> int:
         from html import unescape
 
-        report_folder_path = os.path.join(os.path.dirname(virtualdrive.path_to_vhd), "unit_test_results")
+        report_folder_path = None
+        if not VirtualDriveIsSharedDir:
+            report_folder_path = os.path.join(os.path.dirname(virtualdrive.path_to_vhd), "unit_test_results")
+        else:
+            report_folder_path = os.path.join(output_base, "unit_test_results")
         os.makedirs(report_folder_path, exist_ok=True)
-        #now parse the xml for errors
+        # now parse the xml for errors
         failure_count = 0
         logging.info("UnitTest Completed")
         for unit_test in self.test_list:
-            xml_result_file = os.path.basename(unit_test)[:-4] + "_JUNIT.XML"
-            output_xml_file = os.path.join(report_folder_path, xml_result_file)
             try:
-                data = virtualdrive.GetFileContent(xml_result_file, output_xml_file)
+                if not VirtualDriveIsSharedDir:
+                    xml_result_file = os.path.basename(unit_test)[:-4] + "_JUNIT.XML"
+                    output_xml_file = os.path.join(report_folder_path, xml_result_file)
+                    data = virtualdrive.GetFileContent(xml_result_file, output_xml_file)
+                else:
+                    xml_result_file = os.path.join(virtualdrive, os.path.basename(unit_test)[:-4] + "_JUNIT.XML")
+                    output_xml_file = os.path.join(report_folder_path, os.path.basename(unit_test)[:-4] + "_JUNIT.XML")
+                    with open(xml_result_file, 'r') as f, open(output_xml_file, 'w') as out:
+                        data = f.read()
+                        out.write(data)
             except:
                 logging.error(f"unit test ({unit_test}) produced no result file")
                 failure_count += 1
