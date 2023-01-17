@@ -74,7 +74,7 @@ class QemuRunner(uefi_helper_plugin.IUefiHelperPlugin):
         if os.path.isfile(VirtualDrive):
             args += f" -hdd {VirtualDrive}"
         elif os.path.isdir(VirtualDrive):
-            args += f" -drive file=fat:rw:{VirtualDrive},format=raw,media=disk"
+            args += f" -drive file=fat:rw:{VirtualDrive},format=raw,fat-type=32,media=disk"
         else:
             logging.critical("Virtual Drive Path Invalid")
 
@@ -123,7 +123,11 @@ class QemuRunner(uefi_helper_plugin.IUefiHelperPlugin):
 
         # Run QEMU
         #ret = QemuRunner.RunCmd(executable, args,  thread_target=QemuRunner.QemuCmdReader)
-        ret = utility_functions.RunCmd(executable, args)
+        ret = 0
+        try:
+            ret = utility_functions.RunCmd(executable, args)
+        except UnicodeDecodeError as e:
+            logging.error(str(e))
         if ret != 0 and os.name != 'nt':
             # Linux version of QEMU will mess with the print if its run failed, this is to restore it
             utility_functions.RunCmd ('stty', 'echo')
