@@ -74,7 +74,7 @@ class QemuRunner(uefi_helper_plugin.IUefiHelperPlugin):
         if os.path.isfile(VirtualDrive):
             args += f" -hdd {VirtualDrive}"
         elif os.path.isdir(VirtualDrive):
-            args += f" -drive file=fat:rw:{VirtualDrive},format=raw,media=disk"
+            args += f" -drive file=fat:rw:{VirtualDrive},format=raw,fat-type=32,media=disk"
         else:
             logging.critical("Virtual Drive Path Invalid")
 

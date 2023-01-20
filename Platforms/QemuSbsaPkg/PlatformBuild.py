@@ -339,7 +339,11 @@ class PlatformBuilder( UefiBuilder, BuildSettingsManager):
         output_base = self.env.GetValue("BUILD_OUTPUT_BASE")
         shutdown_after_run = (self.env.GetValue("SHUTDOWN_AFTER_RUN", "FALSE").upper() == "TRUE")
         empty_drive = (self.env.GetValue("EMPTY_DRIVE", "FALSE").upper() == "TRUE")
+<<<<<<< HEAD
         SharedDirPath = self.env.GetValue("SHARED_DIR_PATH", None)
+=======
+        SharedDirPath = self.env.GetValue("SHARED_DRIVE_PATH", None)
+>>>>>>> 4f39b7232f1d3568101c75a6f9d611a4cf1f2436
         VirtualDriveIsSharedDir = False
         VirtualDrivePath = self.env.GetValue("VIRTUAL_DRIVE_PATH", os.path.join(output_base, "VirtualDrive.vhd"))
         if SharedDirPath is not None:
