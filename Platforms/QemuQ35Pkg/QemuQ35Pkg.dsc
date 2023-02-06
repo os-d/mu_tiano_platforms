@@ -292,10 +292,8 @@
   LoadLinuxLib         |QemuQ35Pkg/Library/LoadLinuxLib/LoadLinuxLib.inf
 
   # Setup variable libraries
-  ConfigBlobBaseLib         |SetupDataPkg/Library/ConfigBlobBaseLib/ConfigBlobBaseLib.inf
-  ConfigDataLib             |SetupDataPkg/Library/ConfigDataLib/ConfigDataLib.inf
-  ConfigVariableListLib     |SetupDataPkg/Library/ConfigVariableListLib/ConfigVariableListLib.inf
-  ConfigSystemModeLib       |QemuQ35Pkg/Library/ConfigSystemModeLibQ35/ConfigSystemModeLib.inf
+  SvdXmlSettingSchemaSupportLib |SetupDataPkg/Library/SvdXmlSettingSchemaSupportLib/SvdXmlSettingSchemaSupportLib.inf
+  ConfigSystemModeLib           |QemuQ35Pkg/Library/ConfigSystemModeLibQ35/ConfigSystemModeLib.inf
 
   # Network libraries
   NetLib                 |NetworkPkg/Library/DxeNetLib/DxeNetLib.inf
