@@ -8,14 +8,17 @@
 
 [Defines]
   INF_VERSION         = 0x00010017
-  BASE_NAME           = ConfigDataGfx
+  BASE_NAME           = ConfigKnobs
   FILE_GUID           = 21A70D99-5FFE-4190-BCAA-5E6EDDA54951
   VERSION_STRING      = 1.0
   MODULE_TYPE         = PEIM
-  ENTRY_POINT         = ConfigDataGfxEntry
+  ENTRY_POINT         = ConfigKnobsEntry
 
 [Sources]
-  ConfigDataGfx.c
+  ConfigKnobs.c
+  ConfigKnobs.h
+  PolicyDataGfx/PolicyDataGfx.c
+  ConfigDataGfx/ConfigDataGfx.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -39,4 +42,5 @@
   gPeiPolicyPpiGuid                 ## CONSUMES
 
 [Depex]
-  gPeiPolicyPpiGuid
+  gPeiPolicyPpiGuid AND
+  gPolicyConfigDataGuid

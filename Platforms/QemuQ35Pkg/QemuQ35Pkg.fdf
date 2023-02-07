@@ -266,7 +266,7 @@ INF  MsGraphicsPkg/MsEarlyGraphics/Pei/MsEarlyGraphics.inf
 INF  MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTablePei/FirmwarePerformancePei.inf
 
 INF  PolicyServicePkg/PolicyService/Pei/PolicyPei.inf
-INF  QemuQ35Pkg/ConfigDataGfx/ConfigDataGfx.inf
+INF  QemuQ35Pkg/ConfigKnobs/ConfigKnobs.inf
 
 # Shared Crypto
 !if $(ENABLE_SHARED_CRYPTO) == TRUE

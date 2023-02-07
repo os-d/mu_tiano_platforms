@@ -97,7 +97,8 @@ ConvertGfxPolicyFromConfData (
 EFI_STATUS
 EFIAPI
 ApplyGfxConfigToPolicy (
-  IN  POLICY_PROTOCOL  *PolicyInterface
+  IN  POLICY_PPI  *PolicyInterface,
+  IN  VOID        *ConfigBuffer
   )
 {
   EFI_STATUS  Status;
@@ -108,14 +109,15 @@ ApplyGfxConfigToPolicy (
   GFX_POLICY_DATA  GfxSiPol[GFX_PORT_MAX_CNT];
   GFX_POLICY_DATA  GfxConfPol[GFX_PORT_MAX_CNT];
 
-  if (PolicyInterface == NULL) {
+  if ((PolicyInterface == NULL) ||
+      (ConfigBuffer == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
 
   DEBUG ((DEBUG_ERROR, "%a Entry...\n", __FUNCTION__));
 
   // query autogen header to get config knob value
-  GfxEnablePort0 = ConfigGetPowerOnPort0 ();
+  GfxEnablePort0 = *(BOOLEAN*)ConfigBuffer;
   Size           = sizeof (GfxSiPol);
   Status         = PolicyInterface->GetPolicy (&gPolicyDataGFXGuid, &Attr, GfxSiPol, &Size);
   if (EFI_ERROR (Status)) {
@@ -141,44 +143,5 @@ ApplyGfxConfigToPolicy (
   }
 
 Exit:
-  return Status;
-}
-
-/**
-  Module entry point that will check configuration data and publish them to policy database.
-
-  @param FileHandle                     The image handle.
-  @param PeiServices                    The PEI services table.
-
-  @retval Status                        From internal routine or boot object, should not fail
-**/
-EFI_STATUS
-EFIAPI
-ConfigDataGfxEntry (
-  IN EFI_PEI_FILE_HANDLE     FileHandle,
-  IN CONST EFI_PEI_SERVICES  **PeiServices
-  )
-{
-  EFI_STATUS  Status;
-  POLICY_PPI  *PolPpi = NULL;
-
-  DEBUG ((DEBUG_INFO, "%a - Entry.\n", __FUNCTION__));
-
-  // First locate policy ppi.
-  Status = PeiServicesLocatePpi (&gPeiPolicyPpiGuid, 0, NULL, (VOID *)&PolPpi);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a Failed to locate Policy PPI - %r\n", __FUNCTION__, Status));
-    ASSERT (FALSE);
-    return Status;
-  }
-
-  // Publish GFX policy
-  Status = PolPpi->SetPolicy (&gPolicyDataGFXGuid, 0, DefaultQemuGfxPolicy, sizeof (DefaultQemuGfxPolicy));
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a Failed to set GFX policy - %r\n", __FUNCTION__, Status));
-  }
-
-  Status = ApplyGfxConfigToPolicy (PolPpi);
-
   return Status;
 }

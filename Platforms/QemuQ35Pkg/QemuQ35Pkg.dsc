@@ -1140,7 +1140,7 @@ PlatformSmmProtectionsTestLib|UefiTestingPkg/Library/PlatformSmmProtectionsTestL
   MfciPkg/MfciPei/MfciPei.inf
 
   PolicyServicePkg/PolicyService/Pei/PolicyPei.inf
-  QemuQ35Pkg/ConfigDataGfx/ConfigDataGfx.inf
+  QemuQ35Pkg/ConfigKnobs/ConfigKnobs.inf
 
 !if $(ENABLE_SHARED_CRYPTO) == TRUE
   [PcdsFixedAtBuild]
