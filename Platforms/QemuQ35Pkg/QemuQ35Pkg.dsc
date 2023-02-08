@@ -293,6 +293,7 @@
 
   # Setup variable libraries
   SvdXmlSettingSchemaSupportLib |SetupDataPkg/Library/SvdXmlSettingSchemaSupportLib/SvdXmlSettingSchemaSupportLib.inf
+  ConfigVariableListLib         |SetupDataPkg/Library/ConfigVariableListLib/ConfigVariableListLib.inf
   ConfigSystemModeLib           |QemuQ35Pkg/Library/ConfigSystemModeLibQ35/ConfigSystemModeLib.inf
   PlatformConfigDataLib         |QemuQ35Pkg/Library/Q35ConfigDataLib/Q35ConfigDataLib.inf
 
@@ -904,6 +905,8 @@ PlatformSmmProtectionsTestLib|UefiTestingPkg/Library/PlatformSmmProtectionsTestL
   gEfiMdeModulePkgTokenSpaceGuid.PcdBootManagerInBootOrder|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdPlatformRecoverySupport|FALSE
   gPcBdsPkgTokenSpaceGuid.PcdLowResolutionInternalShell|FALSE
+  # Set this to be gPolicyConfigDataGuid
+  gSetupDataPkgTokenSpaceGuid.PcdConfigurationPolicyList|{GUID("b7d508db-72CC-4440-9990-e9ebae039435")}
   # The GUID of SetupDataPkg/ConfApp/ConfApp.inf: E3624086-4FCD-446E-9D07-B6B913792071
 
 !if $(GUI_FRONT_PAGE) == TRUE
