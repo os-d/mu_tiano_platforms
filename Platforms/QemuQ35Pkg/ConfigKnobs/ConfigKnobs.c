@@ -27,6 +27,64 @@
 
 #include "ConfigKnobs.h"
 
+// temp test of autogen change
+typedef struct {
+  UINTN       NameSize;
+  UINTN       DataSize;
+  EFI_GUID    NamespaceGuid;
+} CONF_POLICY_ENTRY;
+
+VOID *CachedPolicy = NULL;
+BOOLEAN CachedPolicyInitialized = FALSE;
+UINT16 CachedPolicySize = 0x38;
+
+STATIC
+BOOLEAN
+TempGetPowerOnPort0 (
+  )
+{
+  POLICY_PPI  *PolPpi        = NULL;
+  EFI_STATUS Status;
+  // autogen'ed offset, past the first header and length of the name
+  UINTN      Offset = sizeof(CONF_POLICY_ENTRY) + 26;
+
+  if (!CachedPolicyInitialized) {
+    // fetch policy
+    Status = PeiServicesLocatePpi (
+             &gPeiPolicyPpiGuid,
+             0,
+             NULL,
+             (VOID **)&PolPpi
+             );
+
+    if (EFI_ERROR (Status)) {
+      DEBUG ((DEBUG_ERROR, "%a failed to locate policy service!\n", __FUNCTION__));
+      ASSERT (FALSE);
+      return FALSE;
+    }
+
+    CachedPolicy = AllocatePool (CachedPolicySize);
+    if (CachedPolicy == NULL) {
+      DEBUG ((DEBUG_ERROR, "%a failed to allocate memory for cached policy\n", __FUNCTION__));
+      ASSERT(FALSE);
+      return FALSE;
+    }
+
+    Status = PolPpi->GetPolicy (&gOemConfigPolicyGuid, NULL, CachedPolicy, &CachedPolicySize);
+    if (EFI_ERROR (Status)) {
+      ASSERT (FALSE);
+      return FALSE;
+    }
+    CachedPolicyInitialized = TRUE;
+  }
+
+  DEBUG ((DEBUG_ERROR, "%a cached policy size %x\n", __FUNCTION__, CachedPolicySize));
+
+  DUMP_HEX(DEBUG_ERROR, 0, CachedPolicy, CachedPolicySize, "OSDDEBUG: ");
+
+  return (BOOLEAN)(*((UINT8 *)CachedPolicy + Offset));
+}
+
 /**
   Module entry point that will check configuration data and publish them to policy database.
 
@@ -64,7 +122,7 @@ ConfigKnobsEntry (
     goto Done;
   }
 
-  GfxEnablePort0  = ConfigGetPowerOnPort0 ();
+  GfxEnablePort0  = TempGetPowerOnPort0 ();
   Status          = ApplyGfxConfigToPolicy (PolPpi, &GfxEnablePort0);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a Failed to apply configuration data to the GFX silicon policy - %r\n", __FUNCTION__, Status));
@@ -73,5 +131,9 @@ ConfigKnobsEntry (
   }
 
 Done:
+
+  if (CachedPolicy != NULL) {
+    FreePool (CachedPolicy);
+  }
   return Status;
 }

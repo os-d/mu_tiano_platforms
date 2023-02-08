@@ -7,7 +7,7 @@
   "type": "git",
   "name": "FEATURE_CONFIG",
   "var_name": "FEATURE_CONFIG_PATH",
-  "source": "https://github.com/microsoft/mu_feature_config.git",
-  "version": "e5c8cefb45c5ebe95245947b2f13297af01dd10c",
+  "source": "https://github.com/kuqin12/mu_feature_config.git",
+  "version": "bf65dbeec9015cbd9f0103ad668350a6729eca6c",
   "flags": ["set_build_var"]
 }

@@ -109,7 +109,7 @@ class QemuRunner(uefi_helper_plugin.IUefiHelperPlugin):
         gdb_port = env.GetValue("GDB_SERVER")
         if (gdb_port != None):
             logging.log(logging.INFO, "Enabling GDB server at port tcp::" + gdb_port + ".")
-            args += " -gdb tcp::" + gdb_port
+            args += " -S -gdb tcp::" + gdb_port
 
         # write ConOut messages to telnet localhost port
         serial_port = env.GetValue("SERIAL_PORT")

@@ -294,6 +294,7 @@
   # Setup variable libraries
   SvdXmlSettingSchemaSupportLib |SetupDataPkg/Library/SvdXmlSettingSchemaSupportLib/SvdXmlSettingSchemaSupportLib.inf
   ConfigSystemModeLib           |QemuQ35Pkg/Library/ConfigSystemModeLibQ35/ConfigSystemModeLib.inf
+  PlatformConfigDataLib         |QemuQ35Pkg/Library/Q35ConfigDataLib/Q35ConfigDataLib.inf
 
   # Network libraries
   NetLib                 |NetworkPkg/Library/DxeNetLib/DxeNetLib.inf
@@ -1141,6 +1142,7 @@ PlatformSmmProtectionsTestLib|UefiTestingPkg/Library/PlatformSmmProtectionsTestL
 
   PolicyServicePkg/PolicyService/Pei/PolicyPei.inf
   QemuQ35Pkg/ConfigKnobs/ConfigKnobs.inf
+  OemPkg/OemConfigPolicyCreatorPei/OemConfigPolicyCreatorPei.inf
 
 !if $(ENABLE_SHARED_CRYPTO) == TRUE
   [PcdsFixedAtBuild]

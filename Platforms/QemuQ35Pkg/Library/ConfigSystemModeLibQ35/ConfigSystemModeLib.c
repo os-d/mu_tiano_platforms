@@ -25,5 +25,5 @@ IsSystemInManufacturingMode (
   VOID
   )
 {
-  return (GetMfciSystemOperationMode () == OEM_UEFI_MANUFACTURING_MODE);
+  return /*(GetMfciSystemOperationMode () == OEM_UEFI_MANUFACTURING_MODE)*/TRUE;
 }
