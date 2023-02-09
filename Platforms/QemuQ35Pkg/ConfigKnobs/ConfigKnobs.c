@@ -36,7 +36,7 @@ typedef struct {
 
 VOID *CachedPolicy = NULL;
 BOOLEAN CachedPolicyInitialized = FALSE;
-UINT16 CachedPolicySize = 0x38;
+UINT16 CachedPolicySize = 0x3B;
 
 STATIC
 BOOLEAN
@@ -45,8 +45,8 @@ TempGetPowerOnPort0 (
 {
   POLICY_PPI  *PolPpi        = NULL;
   EFI_STATUS Status;
-  // autogen'ed offset, past the first header and length of the name
-  UINTN      Offset = sizeof(CONF_POLICY_ENTRY) + 26;
+  // autogen'ed offset, past the header, but not the data or CRC
+  UINTN      Offset = CachedPolicySize - sizeof (BOOLEAN) - sizeof (UINT32);
 
   if (!CachedPolicyInitialized) {
     // fetch policy

@@ -1,13 +1,12 @@
 #
-# This external dependency pulls MU_BASECORE for the Config feature package CI.
-# This should not be pulled when consuming this package as a dependency.
+# This external dependency pulls mu_feature_config for platforms to consume.
 #
 {
   "scope": "global",
   "type": "git",
   "name": "FEATURE_CONFIG",
   "var_name": "FEATURE_CONFIG_PATH",
-  "source": "https://github.com/kuqin12/mu_feature_config.git",
-  "version": "bf65dbeec9015cbd9f0103ad668350a6729eca6c",
+  "source": "https://github.com/os-d/mu_feature_config.git",
+  "version": "6d046b5506e145d6bb9dbeacede16cfef4e30981",
   "flags": ["set_build_var"]
 }
