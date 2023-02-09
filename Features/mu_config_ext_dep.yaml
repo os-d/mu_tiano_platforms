@@ -7,6 +7,6 @@
   "name": "FEATURE_CONFIG",
   "var_name": "FEATURE_CONFIG_PATH",
   "source": "https://github.com/os-d/mu_feature_config.git",
-  "version": "6d046b5506e145d6bb9dbeacede16cfef4e30981",
+  "version": "cb9a222533bdcebbeb8ebd57d463dc2dbc173c34",
   "flags": ["set_build_var"]
 }
