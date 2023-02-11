@@ -115,13 +115,6 @@ ConfigKnobsEntry (
     goto Done;
   }
 
-  Status = PublishDefaultPolicyGfx (PolPpi);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((DEBUG_ERROR, "%a Failed to locate Policy PPI - %r\n", __FUNCTION__, Status));
-    ASSERT (FALSE);
-    goto Done;
-  }
-
   GfxEnablePort0  = TempGetPowerOnPort0 ();
   Status          = ApplyGfxConfigToPolicy (PolPpi, &GfxEnablePort0);
   if (EFI_ERROR (Status)) {
