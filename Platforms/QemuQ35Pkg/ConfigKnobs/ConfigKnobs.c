@@ -8,22 +8,17 @@
 
 #include <Uefi.h>
 #include <PolicyDataStructGFX.h>
-#include <Protocol/Policy.h>
 
-#include <Ppi/ReadOnlyVariable2.h>
 #include <Ppi/Policy.h>
 #include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/PeiServicesLib.h>
-#include <Library/UefiLib.h>
-#include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
-#include <Library/PrintLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <ConfigStdStructDefs.h>
 
 // XML autogen definitions
 #include <Generated/ConfigClientGenerated.h>
+#include <Generated/ConfigServiceGenerated.h>
 
 #include "ConfigKnobs.h"
 

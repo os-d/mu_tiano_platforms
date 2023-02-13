@@ -25,6 +25,7 @@
   SetupDataPkg/SetupDataPkg.dec
   PolicyServicePkg/PolicyServicePkg.dec
   QemuQ35Pkg/QemuQ35Pkg.dec
+  OemPkg/OemPkg.dec
 
 [LibraryClasses]
   BaseLib
@@ -33,14 +34,14 @@
   PeimEntryPoint
   PeiServicesLib
   PrintLib
-  ConfigKnobShimLib
 
 [Guids]
   gPolicyDataGFXGuid                            # CONSUMES
+  gOemConfigPolicyGuid              ## CONSUMES
 
 [Ppis]
   gPeiPolicyPpiGuid                 ## CONSUMES
 
 [Depex]
-  gPeiPolicyPpiGuid AND
-  gPolicyConfigDataGuid
+  gPeiPolicyPpiGuid AND       ## Policy Service
+  gOemConfigPolicyGuid        ## Oem Published Config Policy

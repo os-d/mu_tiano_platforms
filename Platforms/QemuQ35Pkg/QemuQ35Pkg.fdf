@@ -267,6 +267,7 @@ INF  MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTablePei/FirmwarePerform
 
 INF  PolicyServicePkg/PolicyService/Pei/PolicyPei.inf
 INF  QemuQ35Pkg/ConfigKnobs/ConfigKnobs.inf
+INF  OemPkg/OemConfigPolicyCreatorPei/OemConfigPolicyCreatorPei.inf
 
 # Shared Crypto
 !if $(ENABLE_SHARED_CRYPTO) == TRUE
@@ -384,6 +385,8 @@ INF  MdeModulePkg/Universal/Disk/UdfDxe/UdfDxe.inf
 
 INF  ShellPkg/DynamicCommand/TftpDynamicCommand/TftpDynamicCommand.inf
 INF  QemuQ35Pkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.inf
+
+INF  OemPkg/FrontpageButtonsVolumeUp/FrontpageButtonsVolumeUp.inf
 
 #
 # Network modules

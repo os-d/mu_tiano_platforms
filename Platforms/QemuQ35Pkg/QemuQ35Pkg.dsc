@@ -294,6 +294,7 @@
   # Setup variable libraries
   SvdXmlSettingSchemaSupportLib |SetupDataPkg/Library/SvdXmlSettingSchemaSupportLib/SvdXmlSettingSchemaSupportLib.inf
   ConfigSystemModeLib           |QemuQ35Pkg/Library/ConfigSystemModeLibQ35/ConfigSystemModeLib.inf
+  PlatformConfigDataLib         |QemuQ35Pkg/Library/Q35ConfigDataLib/Q35ConfigDataLib.inf
 
   # Network libraries
   NetLib                 |NetworkPkg/Library/DxeNetLib/DxeNetLib.inf
@@ -539,6 +540,8 @@
   PrmModuleDiscoveryLib|PrmPkg/Library/DxePrmModuleDiscoveryLib/DxePrmModuleDiscoveryLib.inf
   PrmPeCoffLib|PrmPkg/Library/DxePrmPeCoffLib/DxePrmPeCoffLib.inf
 
+  ConfigVariableListLib|SetupDataPkg/Library/ConfigVariableListLib/ConfigVariableListLib.inf
+
 #########################################
 # SEC Libraries
 #########################################
@@ -608,6 +611,7 @@
   BaseCryptLib               |CryptoPkg/Library/BaseCryptLib/PeiCryptLib.inf
   PcdDatabaseLoaderLib       |MdeModulePkg/Library/PcdDatabaseLoaderLib/Pei/PcdDatabaseLoaderLibPei.inf
   OemMfciLib                 |OemPkg/Library/OemMfciLib/OemMfciLibPei.inf
+  ConfigKnobShimLib          |SetupDataPkg/Library/ConfigKnobShimLib/ConfigKnobShimPeiLib/ConfigKnobShimPeiLib.inf
 !if $(SOURCE_DEBUG_ENABLE) == TRUE
   DebugAgentLib              |SourceLevelDebugPkg/Library/DebugAgent/SecPeiDebugAgentLib.inf
 !endif
@@ -617,7 +621,6 @@
   SourceDebugEnabledLib      |SourceLevelDebugPkg/Library/SourceDebugEnabled/SourceDebugEnabledLib.inf
   Tcg2PreUefiEventLogLib     |SecurityPkg/Library/QemuQ35PkgPreUefiEventLogLib/QemuQ35PkgPreUefiEventLogLib.inf ## BRET - Do we have a null instance
 !endif
-  ConfigKnobShimLib          |QemuQ35Pkg/Library/ConfigKnobShimLib/ConfigKnobShimPeiLib/ConfigKnobShimPeiLib.inf
 
 [LibraryClasses.X64.PEIM]
 !ifdef $(DEBUG_ON_SERIAL_PORT)
@@ -657,7 +660,6 @@
   PciLib   |QemuQ35Pkg/Library/DxePciLibI440FxQ35/DxePciLibI440FxQ35.inf
 
   OemMfciLib        |OemPkg/Library/OemMfciLib/OemMfciLibDxe.inf
-  ConfigKnobShimLib |QemuQ35Pkg/Library/ConfigKnobShimLib/ConfigKnobShimDxeLib/ConfigKnobShimDxeLib.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib                  |MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -1141,6 +1143,7 @@ PlatformSmmProtectionsTestLib|UefiTestingPkg/Library/PlatformSmmProtectionsTestL
 
   PolicyServicePkg/PolicyService/Pei/PolicyPei.inf
   QemuQ35Pkg/ConfigKnobs/ConfigKnobs.inf
+  OemPkg/OemConfigPolicyCreatorPei/OemConfigPolicyCreatorPei.inf
 
 !if $(ENABLE_SHARED_CRYPTO) == TRUE
   [PcdsFixedAtBuild]
