@@ -1118,9 +1118,6 @@
   MsGraphicsPkg/DisplayEngineDxe/DisplayEngineDxe.inf
   QemuSbsaPkg/QemuVideoDxe/QemuVideoDxe.inf
   MdeModulePkg/Universal/FvSimpleFileSystemDxe/FvSimpleFileSystemDxe.inf
-  ArmPkg/Drivers/ArmPsciMpServicesDxe/ArmPsciMpServicesDxe.inf
-  UefiTestingPkg/FunctionalSystemTests/MpManagement/Driver/MpManagement.inf
-  UefiTestingPkg/FunctionalSystemTests/MpManagement/App/MpManagementTestApp.inf
 
   MdeModulePkg/Universal/Acpi/FirmwarePerformanceDataTableDxe/FirmwarePerformanceDxe.inf
   MsCorePkg/MuCryptoDxe/MuCryptoDxe.inf
