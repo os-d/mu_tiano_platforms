@@ -141,6 +141,7 @@
   gEfiPeiMpServicesPpiGuid
   gEfiPeiReadOnlyVariable2PpiGuid
   gEfiPeiMpServices2PpiGuid
+  gInstallPeiMemoryBinsPpiGuid
 
 [Depex]
   TRUE

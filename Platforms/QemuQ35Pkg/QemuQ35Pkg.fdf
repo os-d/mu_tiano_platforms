@@ -231,11 +231,10 @@ INF  MdeModulePkg/Universal/PCD/Pei/Pcd.inf
 INF  MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
 INF  MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
 INF  SecurityPkg/RandomNumberGenerator/RngPei/RngPei.inf
-INF  QemuQ35Pkg/PlatformPei/PlatformPei.inf
-INF  MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
-
 INF  MdeModulePkg/Universal/FaultTolerantWritePei/FaultTolerantWritePei.inf
 INF  MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
+INF  QemuQ35Pkg/PlatformPei/PlatformPei.inf
+INF  MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
 
 !if $(SMM_ENABLED) == TRUE
 INF  QemuQ35Pkg/SmmAccess/SmmAccessPei.inf
